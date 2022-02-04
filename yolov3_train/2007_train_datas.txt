@@ -1,0 +1,4 @@
+G:\模型源码学习\ocr相关模型\keras-yolo3\yolov3_train/VOCdevkit/VOC2007/JPEGImages/A-1_trans_0.jpg 26,18,546,520,0 907,652,1204,1011,2
+G:\模型源码学习\ocr相关模型\keras-yolo3\yolov3_train/VOCdevkit/VOC2007/JPEGImages/A-1_trans_1.jpg 30,68,547,568,0 908,702,1210,1064,2
+G:\模型源码学习\ocr相关模型\keras-yolo3\yolov3_train/VOCdevkit/VOC2007/JPEGImages/A-2_trans_0.jpg 193,130,313,210,2 272,222,365,337,3 344,93,486,222,0
+G:\模型源码学习\ocr相关模型\keras-yolo3\yolov3_train/VOCdevkit/VOC2007/JPEGImages/A-2_trans_1.jpg 109,90,229,168,2 188,180,281,295,3 258,52,402,180,0

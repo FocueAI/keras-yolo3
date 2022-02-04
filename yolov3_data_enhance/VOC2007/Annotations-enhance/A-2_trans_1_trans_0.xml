@@ -1,0 +1,32 @@
+<annotation>
+	<folder>h</folder>
+	<filename>s</filename>
+	<path>c</path>
+	<object>
+		<name>C</name>
+		<bndbox>
+			<xmin>146</xmin>
+			<ymin>102</ymin>
+			<xmax>273</xmax>
+			<ymax>178</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>D</name>
+		<bndbox>
+			<xmin>232</xmin>
+			<ymin>190</ymin>
+			<xmax>331</xmax>
+			<ymax>302</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>A</name>
+		<bndbox>
+			<xmin>297</xmin>
+			<ymin>61</ymin>
+			<xmax>448</xmax>
+			<ymax>186</ymax>
+		</bndbox>
+	</object>
+</annotation>
