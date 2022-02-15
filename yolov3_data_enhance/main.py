@@ -7,12 +7,14 @@ from tqdm import tqdm
 import numpy as mp
 import enhance_tools as tool
 import random
+from PIL import Image
+
 # 原始的  图片 和 xml 文件
-pic_path = r'VOC2007/JPEGImages'
-label_xml_path = r'VOC2007/Annotations'
+pic_path = r'F:\各种公司\jst2\第2批数据\all_img\traindataset\img'
+label_xml_path = r'F:\各种公司\jst2\第2批数据\all_img\traindataset\label'
 # 变换后的 图片 和 xml 文件
-save_trans_pic_path = r'./VOC2007/img-enhance'
-save_trans_xml_path = r'./VOC2007/Annotations-enhance'
+save_trans_pic_path = r'F:\各种公司\jst2\第2批数据\all_img\traindataset\img-enhance'
+save_trans_xml_path = r'F:\各种公司\jst2\第2批数据\all_img\traindataset\label-enhance'
 
 if os.path.exists(save_trans_pic_path):shutil.rmtree(save_trans_pic_path)
 os.mkdir(save_trans_pic_path)
@@ -25,9 +27,10 @@ ramdom_add_padding_flag = True
 # 是否需要在图片进行仿射变换
 ramdom_perspectiveTransform_flag = True
 # 增强的轮次
-enhance_epoch = 1
+enhance_epoch = 10
 
-for j in range(enhance_epoch): # 样本数要增强的倍数（不带原样本）
+# for j in range(enhance_epoch): # 样本数要增强的倍数（不带原样本）
+for j in range(0,enhance_epoch):  # 样本数要增强的倍数（不带原样本）
     for i in tqdm(os.listdir(pic_path)):
         #######################################
         random_border = random.randint(8, 20)
@@ -36,8 +39,15 @@ for j in range(enhance_epoch): # 样本数要增强的倍数（不带原样本�
 
         file_name,typename = os.path.splitext(i)
         detail_pic_path = os.path.join(pic_path,i)
-        detail_pic_trans_path = os.path.join(save_trans_pic_path, file_name + f'_trans_{j}{typename}')    ############################
-        img = cv2.imread(detail_pic_path)
+        detail_pic_trans_path = os.path.join(save_trans_pic_path, file_name + f'_trans_{j}{typename}')
+        ###########################
+        # <=======before
+        # img = cv2.imread(detail_pic_path)
+        # =========> now
+        pil_img = Image.open(detail_pic_path)
+        img = tool.pil2cv(pil_img)
+        ###########################
+
         if ramdom_add_padding_flag:  # 是否允许在图片上随机padding
             # top, bottom, left, right
             top_padding = np.random.randint(0,random_padding_border)
@@ -65,7 +75,12 @@ for j in range(enhance_epoch): # 样本数要增强的倍数（不带原样本�
         dst_pic = tool.addGaussianNoise(dst_pic,random.uniform(0.01, 0.03))
         dst_pic = tool.SaltAndPepper(dst_pic, random.uniform(0.01, 0.03))
         ########################################## 进行数据增强操作 end
-        cv2.imwrite(detail_pic_trans_path, dst_pic)
+        #<==========================before
+        # cv2.imwrite(detail_pic_trans_path, dst_pic)
+        # ==========================>now
+        dst_pil_img = tool.cv2pil(dst_pic)
+        dst_pil_img.save(detail_pic_trans_path)
+
         ######################################## end
         detail_xml_path = os.path.join(label_xml_path, file_name + '.xml')
         detail_xml_save_path = os.path.join(save_trans_xml_path, file_name + '_trans_%s.xml'%(j))   #######################################

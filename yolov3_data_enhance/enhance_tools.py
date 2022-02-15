@@ -6,6 +6,16 @@ from PIL import Image
 save_path = './trans_pic'
 raw_pic = './raw_pic'
 
+def pil2cv(pil_img):
+    ''' 把 输入的 pil格式的图像数据转换成 opencv格式的数据 '''
+    return  cv2.cvtColor(np.asarray(pil_img), cv2.COLOR_RGB2BGR)
+
+def cv2pil(img):
+    ''' 把 opecv 格式的图像 转换成 pil格式的图像 '''
+    return Image.fromarray(cv2.cvtColor(img,cv2.COLOR_BGR2RGB))
+
+
+
 def SaltAndPepper(src ,percetage):
     SP_NoiseImg =src.copy()
     SP_NoiseNum =int(percetage *src.shape[0] *src.shape[1])
