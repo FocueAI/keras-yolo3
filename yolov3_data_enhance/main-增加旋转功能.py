@@ -9,12 +9,23 @@ import enhance_tools as tool
 import random
 from PIL import Image
 
+# # 原始的  图片 和 xml 文件
+# pic_path = r'F:\各种公司\jst2\第3批数据\fix_data\fix_data\img'
+# label_xml_path = r'F:\各种公司\jst2\第3批数据\fix_data\fix_data\label'
+# # 变换后的 图片 和 xml 文件
+# save_trans_pic_path = r'F:\各种公司\jst2\第3批数据\fix_data\fix_data\img-enhance'
+# save_trans_xml_path = r'F:\各种公司\jst2\第3批数据\fix_data\fix_data\label-enhance'
+
+
 # 原始的  图片 和 xml 文件
 pic_path = r'F:\各种公司\jst2\第3批数据\fix_data\fix_data\小规模测试\img'
 label_xml_path = r'F:\各种公司\jst2\第3批数据\fix_data\fix_data\小规模测试\label'
 # 变换后的 图片 和 xml 文件
 save_trans_pic_path = r'F:\各种公司\jst2\第3批数据\fix_data\fix_data\小规模测试\img-enhance'
 save_trans_xml_path = r'F:\各种公司\jst2\第3批数据\fix_data\fix_data\小规模测试\label-enhance'
+
+
+
 
 if os.path.exists(save_trans_pic_path):shutil.rmtree(save_trans_pic_path)
 os.mkdir(save_trans_pic_path)
@@ -32,16 +43,17 @@ ramdom_perspectiveTransform_flag = True
 enhance_epoch = 4
 
 ######### 角度旋转整数倍后，坐标的变化  ###########
-def nsz_90_point_change(left_top_coord, right_down_corrd):
+def nsz_90_point_change(left_top_coord, right_down_corrd,img_shape):
     ''' 原图逆时针旋转90°后 box左上角坐标--->新图左上角坐标
         原图逆时针旋转90°后 box右下角坐标--->新图右下角坐标
         参数： left_top_coord,  right_down_corrd 原始的 左上角，右下角 坐标
         return ： 逆时针旋转90°后的 左上角， 右下角 坐标
     '''
+    img_h, img_w = img_shape[:2]
     left_down_y, left_down_x = left_top_coord
     right_up_y, right_up_x = right_down_corrd
 
-    return left_down_x, right_up_y, right_up_x, left_down_y
+    return left_down_x, img_h - right_up_y,  right_up_x, img_h - left_down_y
 
 
 
@@ -71,9 +83,10 @@ for j in range(0,enhance_epoch):  # 样本数要增强的倍数（不带原样�
         img = tool.pil2cv(pil_img)
         ###########################
         if random_90_multi_rotate_flag:
-            rotate_angle = random.randint(1,3)
-            for i in range(rotate_angle):
+            # rotate_angle = random.randint(1,3)
+            # for i in range(rotate_angle):
                 img = np.rot90(img) # 逆时针旋转90度
+        rotated_img_shape = img.shape
         if ramdom_add_padding_flag:  # 是否允许在图片上随机padding
             # top, bottom, left, right
             top_padding = np.random.randint(0,random_padding_border)
@@ -109,6 +122,7 @@ for j in range(0,enhance_epoch):  # 样本数要增强的倍数（不带原样�
 
         ######################################## end
         detail_xml_path = os.path.join(label_xml_path, file_name + '.xml')
+        print('detail_xml_path:',detail_xml_path)
         detail_xml_save_path = os.path.join(save_trans_xml_path, file_name + '_trans_%s.xml'%(j))   #######################################
         ################## 直接更新 xml 文件
         with open(detail_xml_save_path,'w',encoding='utf-8') as xml_writer:
@@ -117,7 +131,7 @@ for j in range(0,enhance_epoch):  # 样本数要增强的倍数（不带原样�
             xml_writer.write('\t<filename>s</filename>\n')
             xml_writer.write('\t<path>c</path>\n')
             #### 读取 xml 文件
-            xml_file = open(detail_xml_path)
+            xml_file = open(detail_xml_path,encoding='utf-8')
             tree = ET.parse(xml_file)
             root = tree.getroot()
             content_dealed = []
@@ -134,8 +148,8 @@ for j in range(0,enhance_epoch):  # 样本数要增强的倍数（不带原样�
                 y1 = int(xmlbox.find('ymax').text)
                 ############################################# 2022-6-3 图片的旋转角度（90°倍数）
                 if random_90_multi_rotate_flag:
-                    for _ in range(rotate_angle):
-                        x0, y0, x1, y1 = nsz_90_point_change((x0, y0),(x1, y1))
+                    # for _ in range(rotate_angle):
+                        x0, y0, x1, y1 = nsz_90_point_change((x0, y0),(x1, y1), rotated_img_shape)
 
                 #############################################
                 if ramdom_add_padding_flag:
