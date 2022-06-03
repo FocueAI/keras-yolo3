@@ -9,20 +9,20 @@ import enhance_tools as tool
 import random
 from PIL import Image
 
-# # 原始的  图片 和 xml 文件
-# pic_path = r'F:\各种公司\jst2\第3批数据\fix_data\fix_data\img'
-# label_xml_path = r'F:\各种公司\jst2\第3批数据\fix_data\fix_data\label'
-# # 变换后的 图片 和 xml 文件
-# save_trans_pic_path = r'F:\各种公司\jst2\第3批数据\fix_data\fix_data\img-enhance'
-# save_trans_xml_path = r'F:\各种公司\jst2\第3批数据\fix_data\fix_data\label-enhance'
-
-
 # 原始的  图片 和 xml 文件
-pic_path = r'F:\各种公司\jst2\第3批数据\fix_data\fix_data\小规模测试\img'
-label_xml_path = r'F:\各种公司\jst2\第3批数据\fix_data\fix_data\小规模测试\label'
+pic_path = r'F:\各种公司\jst2\第3批数据\fix_data\fix_data\img'
+label_xml_path = r'F:\各种公司\jst2\第3批数据\fix_data\fix_data\label'
 # 变换后的 图片 和 xml 文件
-save_trans_pic_path = r'F:\各种公司\jst2\第3批数据\fix_data\fix_data\小规模测试\img-enhance'
-save_trans_xml_path = r'F:\各种公司\jst2\第3批数据\fix_data\fix_data\小规模测试\label-enhance'
+save_trans_pic_path = r'F:\各种公司\jst2\第3批数据\fix_data\fix_data\img-enhance'
+save_trans_xml_path = r'F:\各种公司\jst2\第3批数据\fix_data\fix_data\label-enhance'
+
+
+# # 原始的  图片 和 xml 文件
+# pic_path = r'F:\各种公司\jst2\第3批数据\fix_data\fix_data\小规模测试\img'
+# label_xml_path = r'F:\各种公司\jst2\第3批数据\fix_data\fix_data\小规模测试\label'
+# # 变换后的 图片 和 xml 文件
+# save_trans_pic_path = r'F:\各种公司\jst2\第3批数据\fix_data\fix_data\小规模测试\img-enhance'
+# save_trans_xml_path = r'F:\各种公司\jst2\第3批数据\fix_data\fix_data\小规模测试\label-enhance'
 
 
 
@@ -82,11 +82,13 @@ for j in range(0,enhance_epoch):  # 样本数要增强的倍数（不带原样�
         pil_img = Image.open(detail_pic_path)
         img = tool.pil2cv(pil_img)
         ###########################
+        rotated_img_shape_list = []
         if random_90_multi_rotate_flag:
-            # rotate_angle = random.randint(1,3)
-            # for i in range(rotate_angle):
+            rotate_angle = random.randint(1,3)
+            for i in range(rotate_angle):
                 img = np.rot90(img) # 逆时针旋转90度
-        rotated_img_shape = img.shape
+                rotated_img_shape_list.append(img.shape)
+
         if ramdom_add_padding_flag:  # 是否允许在图片上随机padding
             # top, bottom, left, right
             top_padding = np.random.randint(0,random_padding_border)
@@ -148,8 +150,8 @@ for j in range(0,enhance_epoch):  # 样本数要增强的倍数（不带原样�
                 y1 = int(xmlbox.find('ymax').text)
                 ############################################# 2022-6-3 图片的旋转角度（90°倍数）
                 if random_90_multi_rotate_flag:
-                    # for _ in range(rotate_angle):
-                        x0, y0, x1, y1 = nsz_90_point_change((x0, y0),(x1, y1), rotated_img_shape)
+                    for index, _ in enumerate(range(rotate_angle)):
+                        x0, y0, x1, y1 = nsz_90_point_change((x0, y0),(x1, y1), rotated_img_shape_list[index])
 
                 #############################################
                 if ramdom_add_padding_flag:
