@@ -113,8 +113,10 @@ for j in range(0,enhance_epoch):  # 样本数要增强的倍数（不带原样�
         M = cv2.getPerspectiveTransform(pts1, pts2)
         dst_pic = cv2.warpPerspective(img, M, (int(img_w), int(img_h)))
         ########################################## 进行数据增强操作 begin
-        dst_pic = tool.addGaussianNoise(dst_pic,random.uniform(0.01, 0.03))
-        dst_pic = tool.SaltAndPepper(dst_pic, random.uniform(0.01, 0.03))
+        if random.random() < 0.5:
+            dst_pic = tool.addGaussianNoise(dst_pic,random.uniform(0.01, 0.03))
+        if random.random() < 0.5:
+            dst_pic = tool.SaltAndPepper(dst_pic, random.uniform(0.01, 0.03))
         ########################################## 进行数据增强操作 end
         #<==========================before
         # cv2.imwrite(detail_pic_trans_path, dst_pic)
