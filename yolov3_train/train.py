@@ -66,7 +66,7 @@ def _main():
     num_val = int(len(lines)*val_split)
     num_train = len(lines) - num_val
 
-    # 增加 lr 值的 打印 2022—6-5
+    # 增加 lr 值的   打印 2022—6-5
     def get_lr_metric(optimizer):
         def lr(y_true, y_pred):
             return optimizer.lr
