@@ -66,12 +66,20 @@ def _main():
     num_val = int(len(lines)*val_split)
     num_train = len(lines) - num_val
 
+    # 增加 lr 值的 打印 2022—6-5
+    def get_lr_metric(optimizer):
+        def lr(y_true, y_pred):
+            return optimizer.lr
+        return lr
 
+    optimizer = Adam(lr=1e-3)
+    lr_metric = get_lr_metric(optimizer)
 
     if True:
         for i in range(len(model.layers)):
             model.layers[i].trainable= True
-        model.compile(optimizer=Adam(lr=1e-3), loss=lambda y_true, y_pred: y_pred)
+        # model.compile(optimizer=Adam(lr=1e-3), loss=lambda y_true, y_pred: y_pred) # raw
+        model.compile(optimizer=optimizer, loss=lambda y_true, y_pred: y_pred, metrics=['accuracy',lr_metric]) # 增加 lr 值的 打印 2022—6-5
         batch_size = 1 # note that more GPU memory is required after unfreezing the body
         print('Train on {} samples, val on {} samples, with batch size {}.'.format(num_train, num_val, batch_size))
         model.fit_generator(data_generator_wrapper(lines[:num_train], batch_size, input_shape, anchors, num_classes),
